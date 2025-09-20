@@ -1,5 +1,5 @@
 <!-- 
-    Versión Visual Mejorada y Estable - Fondos con imágenes reales para máxima compatibilidad.
+    Versión Profesional y Estable - Incluye Registro de Usuarios con Firebase y Google Sign-In.
 -->
 <!DOCTYPE html>
 <html lang="es">
@@ -9,6 +9,38 @@
     <title>Arena Política: Venezuela</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Firebase SDKs -->
+    <script type="module">
+        // Módulo para inicializar Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+        
+        // ====================================================================================
+        // CONFIGURACIÓN DE FIREBASE ACTUALIZADA
+        // ====================================================================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyB54w9xCB4xStBJHLwcYjVXeypdmM6DUqU",
+            authDomain: "arena-politica-app.firebaseapp.com",
+            projectId: "arena-politica-app",
+            storageBucket: "arena-politica-app.firebasestorage.app",
+            messagingSenderId: "677024902953",
+            appId: "1:677024902953:web:6d08410607583f63041138",
+            measurementId: "G-MWRKB689MD"
+        };
+        // ====================================================================================
+
+        // Inicializa Firebase
+        try {
+            const app = initializeApp(firebaseConfig);
+            window.firebaseApp = app; // Hacemos la app accesible globalmente
+        } catch (e) {
+            console.error("Error al inicializar Firebase. ¿Has pegado tu firebaseConfig?", e);
+            // Muestra un error visual si la configuración es incorrecta.
+            const loadingScreen = document.getElementById('loading-screen');
+            if(loadingScreen) {
+                loadingScreen.innerHTML = `<div class="text-center text-white p-4"><h1 class="text-2xl font-bold text-red-500">Error de Configuración</h1><p>No se pudo conectar a Firebase. Por favor, asegúrate de haber pegado correctamente tu 'firebaseConfig' en el archivo index.html.</p></div>`;
+            }
+        }
+    </script>
     <style>
         :root {
             --bg-primary: #131314;
@@ -81,10 +113,10 @@
         .animate-spin { animation: spin 1.5s linear infinite; }
         @keyframes fade-in-up { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade-in-up { animation: fade-in-up 0.5s ease-out forwards; }
-        .mic-active { color: #ef4444; animation: pulse 1.s infinite; }
+        .mic-active { color: #ef4444; animation: pulse 1s infinite; }
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2); } }
 
-        .difficulty-button.active {
+        .difficulty-button.active, .mode-button.active {
             background-color: #0284c7;
             color: white;
             border-color: #0284c7;
@@ -94,84 +126,78 @@
             color: var(--text-primary);
         }
 
-        /* Pantalla de Carga con Imagen de Fondo */
         #loading-screen {
-            background-image: url('https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?q=80&w=2071&auto=format&fit=crop');
+            background-image: url('https://images.unsplash.com/photo-1543286289-0d13c2e5b822?q=80&w=2070&auto=format&fit=crop');
             background-size: cover;
             background-position: center;
             overflow: hidden;
         }
-        @keyframes rise {
-            0% { transform: translateY(80px) scale(0.9); opacity: 0; }
-            50% { opacity: 1; }
-            100% { transform: translateY(0) scale(1); opacity: 1; }
-        }
-        .tepuy-svg { animation: rise 2s ease-out forwards; }
-
-        @keyframes sky-colors {
-            0% { background-color: rgba(9, 10, 15, 0.7); }
-            30% { background-color: rgba(206, 17, 38, 0.4); } /* Rojo */
-            60% { background-color: rgba(0, 36, 125, 0.4); } /* Azul */
-            90%, 100% { background-color: rgba(252, 209, 22, 0.4); } /* Amarillo */
-        }
-        .sky-background {
-            animation: sky-colors 15s linear infinite alternate;
-        }
         
-        @keyframes fly {
-            0% { transform: translateX(-100%) translateY(20px) scale(0.8) rotate(-15deg); }
-            50% { transform: translateX(50vw) translateY(-40px) scale(1) rotate(5deg); }
-            100% { transform: translateX(110vw) translateY(0px) scale(0.9) rotate(-10deg); }
-        }
-        .turpial-loader {
-            position: absolute;
-            top: 40%;
-            left: 0;
-            width: 80px;
-            animation: fly 10s linear infinite;
-            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
-        }
-
-        /* Pantalla de Inicio con Imagen de Fondo */
-        #home-screen {
+        #home-screen, #login-modal {
             background-image: linear-gradient(rgba(9, 10, 15, 0.8), rgba(9, 10, 15, 0.8)), url('https://images.unsplash.com/photo-1613233349758-6979b9d4e1a3?q=80&w=1974&auto=format&fit=crop');
             background-size: cover;
             background-position: center;
         }
-        .role-selection-button {
+        .role-selection-button, .mode-selection-button {
             backdrop-filter: blur(5px);
             -webkit-backdrop-filter: blur(5px);
             background-color: rgba(29, 29, 31, 0.5);
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
         }
-        .role-selection-button:hover {
+        .role-selection-button:hover, .mode-selection-button:hover {
             transform: scale(1.03);
             box-shadow: 0 0 25px var(--glow-color, #fff);
         }
-        #role-opposition:hover { --glow-color: #0284c7; }
-        #role-government:hover { --glow-color: #dc2626; }
+        #role-opposition:hover, #mode-realista:hover { --glow-color: #0284c7; }
+        #role-government:hover, #mode-arcade:hover { --glow-color: #dc2626; }
 
+        @keyframes feedback-toast-in {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes feedback-toast-out {
+            from { transform: translateY(0); opacity: 1; }
+            to { transform: translateY(100%); opacity: 0; }
+        }
+        .feedback-toast {
+            animation: feedback-toast-in 0.5s ease-out forwards, feedback-toast-out 0.5s ease-in forwards 4.5s;
+        }
     </style>
 </head>
 <body class="flex flex-col h-screen items-center justify-center p-2 md:p-4">
 
     <!-- Pantalla de Carga -->
-    <div id="loading-screen" class="fixed inset-0 z-50 transition-opacity duration-500">
-        <div class="absolute inset-0 sky-background"></div>
-        <div class="turpial-loader">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-                <path d="M20 50 C 25 30, 40 25, 50 40 S 70 60, 80 50" fill="none" stroke="#FCD116" stroke-width="5"/>
-                <path d="M45 40 C 50 20, 70 20, 75 40 S 90 55, 95 50" fill="none" stroke="#131314" stroke-width="8"/>
-                <circle cx="78" cy="38" r="2" fill="white"/>
-            </svg>
+    <div id="loading-screen" class="fixed inset-0 z-50 transition-opacity duration-500 flex items-center justify-center">
+        <div class="absolute inset-0 bg-black bg-opacity-50"></div>
+        <div class="relative text-center">
+            <div class="w-16 h-16 border-4 border-dashed border-white rounded-full animate-spin mx-auto"></div>
+            <p class="mt-4 text-lg text-white animate-pulse">Iniciando Arena Política...</p>
         </div>
-        <div class="absolute bottom-0 w-full flex items-end justify-center tepuy-svg">
-            <svg viewBox="0 0 400 200" class="w-full">
-                <path d="M0 200 L50 200 L80 100 L150 120 L200 80 L250 110 L320 90 L350 200 L400 200 Z" fill="#090a0f"/>
-                <path d="M100 190 L120 150 L180 160 L220 140 L280 170 L300 190 Z" fill="#1b2735"/>
-            </svg>
+    </div>
+    
+    <!-- Modal de Login / Registro -->
+    <div id="login-modal" class="hidden fixed inset-0 flex items-center justify-center z-40 p-4">
+        <div class="border border-transparent rounded-lg shadow-xl w-full max-w-md p-6 text-center">
+             <h1 class="text-3xl font-bold text-white drop-shadow-lg">Bienvenido a Arena Política</h1>
+            <p class="text-slate-300 mt-2">Crea tu perfil para comenzar.</p>
+
+            <div class="mt-8 space-y-4">
+                <input type="text" id="login-name-input" style="background-color: rgba(0,0,0,0.3); border-color: var(--border-color);" class="w-full border rounded-md p-3 text-white placeholder-slate-400" placeholder="Nombre">
+                <input type="text" id="login-lastname-input" style="background-color: rgba(0,0,0,0.3); border-color: var(--border-color);" class="w-full border rounded-md p-3 text-white placeholder-slate-400" placeholder="Apellido">
+                <button id="guest-login-button" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-bold py-3 px-4 rounded-md transition-colors">Continuar como Invitado</button>
+            </div>
+
+            <div class="my-4 flex items-center">
+                <hr class="flex-grow border-t border-gray-600">
+                <span class="px-2 text-gray-400">o</span>
+                <hr class="flex-grow border-t border-gray-600">
+            </div>
+
+            <button id="google-login-button" class="w-full bg-white hover:bg-gray-200 text-gray-800 font-semibold py-3 px-4 rounded-md transition-colors flex items-center justify-center gap-2">
+                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8c-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C12.955 4 4 12.955 4 24s8.955 20 20 20s20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/><path fill="#FF3D00" d="m6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C16.318 4 9.656 8.337 6.306 14.691z"/><path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238A8 8 0 0 1 24 36c-5.222 0-9.612-3.87-11.181-9H6.306C9.656 39.663 16.318 44 24 44z"/><path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303c-.792 2.237-2.231 4.166-4.087 5.571l6.19 5.238C42.018 35.897 44 30.428 44 24c0-1.341-.138-2.65-.389-3.917z"/></svg>
+                Iniciar sesión con Google
+            </button>
         </div>
-        <p class="absolute bottom-10 text-lg text-slate-300 animate-pulse">Iniciando Arena Política...</p>
     </div>
     
     <!-- Pantalla de Inicio (Selección de Rol y Dificultad) -->
@@ -179,7 +205,6 @@
         <div class="border border-transparent rounded-lg shadow-xl w-full max-w-2xl p-6 text-center">
             <h1 class="text-4xl font-bold text-white drop-shadow-lg">Arena Política: Venezuela</h1>
             <p class="text-slate-300 mt-2">Elige tu bando y la dificultad para comenzar.</p>
-            
             <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
                 <button id="role-opposition" class="role-selection-button group rounded-lg p-6 transition-all duration-300">
                     <h2 class="text-2xl font-bold text-sky-400 group-hover:text-white">Jugar como Oposición</h2>
@@ -190,13 +215,30 @@
                     <p class="text-sm text-slate-300 mt-2 group-hover:text-red-100">Defiende la soberanía y la narrativa oficial. La IA será la Oposición.</p>
                 </button>
             </div>
-
             <div class="mt-6">
                 <h3 class="text-lg font-semibold text-white">Nivel de Dificultad de la IA</h3>
                 <div class="mt-2 inline-flex rounded-md shadow-sm bg-black/20" role="group">
                     <button type="button" id="difficulty-normal" class="difficulty-button active px-4 py-2 text-sm font-medium border border-gray-600 rounded-l-lg transition-colors">Normal</button>
                     <button type="button" id="difficulty-hard" class="difficulty-button px-4 py-2 text-sm font-medium border-t border-b border-r border-gray-600 rounded-r-lg transition-colors text-slate-400">Difícil</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Modo de Juego -->
+    <div id="mode-modal" class="hidden fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-40 p-4">
+        <div style="background-color: var(--bg-secondary); border-color: var(--border-color);" class="border rounded-lg shadow-xl w-full max-w-2xl p-6 text-center">
+            <h1 class="text-3xl font-bold text-[var(--text-primary)]">Elige el Modo de Juego</h1>
+            <p class="text-[var(--text-secondary)] mt-2">¿Cómo quieres debatir?</p>
+            <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <button id="mode-realista" class="mode-selection-button group rounded-lg p-6 transition-all duration-300 border-2 border-sky-500 hover:bg-sky-500">
+                    <h2 class="text-2xl font-bold text-sky-400 group-hover:text-white">Debate Realista</h2>
+                    <p class="text-sm text-slate-300 mt-2 group-hover:text-sky-100">La experiencia clásica de debate. Todas las herramientas de ayuda son gratuitas e ilimitadas.</p>
+                </button>
+                <button id="mode-arcade" class="mode-selection-button group rounded-lg p-6 transition-all duration-300 border-2 border-red-500 hover:bg-red-500">
+                     <h2 class="text-2xl font-bold text-red-500 group-hover:text-white">Modo Arcade</h2>
+                     <p class="text-sm text-slate-300 mt-2 group-hover:text-red-100">Un desafío estratégico. Comienzas con 3 "Bolos" para gastar en sugerencias. ¡Úsalos sabiamente!</p>
+                </button>
             </div>
         </div>
     </div>
@@ -263,14 +305,24 @@
     <!-- Modal de API Key -->
     <div id="api-key-modal" class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
         <div style="background-color: var(--bg-secondary); border-color: var(--border-color);" class="border rounded-lg shadow-xl p-6 w-full max-w-md">
-            <h2 class="text-xl font-bold text-[var(--text-primary)]">Configurar Clave de API de Gemini</h2>
+            <h2 class="text-xl font-bold text-[var(--text-primary)]">Configurar Perfil y API</h2>
             <p class="text-sm text-[var(--text-secondary)] mt-2">
-                Para que la IA funcione, necesitas una clave de API de Google Gemini. Se guardará de forma segura en tu navegador.
+                Define tu identidad y configura tu clave de API para que la IA funcione.
             </p>
-            <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-sm text-sky-400 hover:underline mt-1 block">
-                Obtener una clave de API de Google AI Studio &rarr;
+            <div class="mt-4">
+                <label for="user-name-input" class="block text-sm font-medium text-[var(--text-primary)]">Tu Nombre</label>
+                <input type="text" id="user-name-input" style="background-color: var(--bg-primary); border-color: var(--border-color);" class="w-full border rounded-md p-2 mt-1 text-[var(--text-primary)]" placeholder="Ej: Analista Político">
+            </div>
+            <div class="mt-4">
+                 <label for="user-specialty-input" class="block text-sm font-medium text-[var(--text-primary)]">Especialidad</label>
+                <input type="text" id="user-specialty-input" style="background-color: var(--bg-primary); border-color: var(--border-color);" class="w-full border rounded-md p-2 mt-1 text-[var(--text-primary)]" placeholder="Ej: Economista">
+            </div>
+            <hr class="border-t border-[var(--border-color)] my-4">
+            <label for="api-key-input" class="block text-sm font-medium text-[var(--text-primary)]">Clave de API de Gemini</label>
+            <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-xs text-sky-400 hover:underline mt-1 block">
+                Obtener una clave de API &rarr;
             </a>
-            <input type="password" id="api-key-input" style="background-color: var(--bg-primary); border-color: var(--border-color);" class="w-full border rounded-md p-2 mt-4 text-[var(--text-primary)]" placeholder="Pega tu clave de API aquí...">
+            <input type="password" id="api-key-input" style="background-color: var(--bg-primary); border-color: var(--border-color);" class="w-full border rounded-md p-2 mt-1 text-[var(--text-primary)]" placeholder="Pega tu clave de API aquí...">
             <div class="flex justify-end gap-4 mt-4">
                  <button id="cancel-api-key" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-md transition-colors">Cancelar</button>
                  <button id="save-api-key" class="bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded-md transition-colors">Guardar</button>
@@ -286,6 +338,7 @@
                 <nav class="mt-4 -mb-px flex space-x-4 border-b border-[var(--border-color)]">
                     <button id="tab-analysis" class="tab-button active py-2 px-1 border-b-2 font-medium text-sm border-transparent text-[var(--text-secondary)] hover:border-gray-300 hover:text-gray-200">Análisis</button>
                     <button id="tab-transcript" class="tab-button py-2 px-1 border-b-2 font-medium text-sm border-transparent text-[var(--text-secondary)] hover:border-gray-300 hover:text-gray-200">Transcripción</button>
+                    <button id="tab-resources" class="tab-button py-2 px-1 border-b-2 font-medium text-sm border-transparent text-[var(--text-secondary)] hover:border-gray-300 hover:text-gray-200">Recursos</button>
                 </nav>
             </header>
 
@@ -297,6 +350,10 @@
 
             <div id="transcript-pane" class="tab-pane scrollable-pane hidden p-6 overflow-y-auto">
                 <div id="transcript-content"></div>
+            </div>
+            
+            <div id="resources-pane" class="tab-pane scrollable-pane hidden p-6 overflow-y-auto">
+                <div id="resources-content"></div>
             </div>
 
             <footer class="p-4 border-t border-[var(--border-color)] flex justify-between items-center gap-4">
@@ -333,7 +390,10 @@
                 <h1 class="text-xl md:text-2xl font-bold">Arena Política: Venezuela</h1>
                 <p id="roles-header" class="text-sm text-center text-[var(--text-secondary)] mt-1"></p>
             </div>
-            <div class="w-40"></div>
+            <div id="reputation-display" class="hidden w-40 flex items-center justify-end gap-2 text-amber-400">
+                <span class="font-bold text-lg" id="reputation-score">0</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+            </div>
         </header>
 
         <main id="chat-container" class="flex-1 p-6 overflow-y-auto flex flex-col gap-4">
@@ -345,506 +405,790 @@
             <form id="chat-form" class="flex items-center gap-3">
                 <button type="button" id="mic-button" title="Entrada de Voz" class="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] p-3 transition"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg></button>
                 <textarea id="message-input" style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-primary);" class="flex-1 border rounded-xl p-3 resize-none focus:ring-2 focus:ring-sky-500 focus:outline-none transition" rows="1" placeholder="Presente su argumento..."></textarea>
+                
+                 <div id="bolos-display" class="hidden flex items-center gap-1 text-amber-400 font-semibold px-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.707-10.293a1 1 0 00-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L9.414 11H13a1 1 0 100-2H9.414l1.293-1.293z" clip-rule="evenodd" />
+                    </svg>
+                    <span id="bolos-count" class="text-lg font-bold">3</span>
+                </div>
+
                 <button type="button" id="suggestion-button" title="Sugerir Argumento" class="bg-teal-500 hover:bg-teal-600 text-white font-semibold rounded-full p-3 transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800 focus:ring-teal-400"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg></button>
                 <button type="submit" id="send-button" class="bg-sky-600 hover:bg-sky-700 text-white font-semibold rounded-full p-3 transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800 focus:ring-sky-500"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" /></svg></button>
             </form>
         </footer>
     </div>
 
-    <script>
-        // DOM Elements
-        const loadingScreen = document.getElementById('loading-screen');
-        const appContainer = document.getElementById('app-container');
-        const chatContainer = document.getElementById('chat-container');
-        const chatForm = document.getElementById('chat-form');
-        const messageInput = document.getElementById('message-input');
-        const loadingIndicator = document.getElementById('loading-indicator');
-        const suggestionButton = document.getElementById('suggestion-button');
-        const sendButton = document.getElementById('send-button');
-        const micButton = document.getElementById('mic-button');
-        const themeToggle = document.getElementById('theme-toggle');
-        const themeSun = document.getElementById('theme-sun');
-        const themeMoon = document.getElementById('theme-moon');
-        const apiKeyModal = document.getElementById('api-key-modal');
-        const apiKeyInput = document.getElementById('api-key-input');
-        const saveApiKeyButton = document.getElementById('save-api-key');
-        const cancelApiKeyButton = document.getElementById('cancel-api-key');
-        const settingsButton = document.getElementById('settings-button');
-        const endDebateButton = document.getElementById('end-debate-button');
-        const summaryModal = document.getElementById('summary-modal');
-        const summaryContent = document.getElementById('summary-content');
-        const restartDebateButton = document.getElementById('restart-debate');
-        const tutorialModal = document.getElementById('tutorial-modal');
-        const startDebateButton = document.getElementById('start-debate-button');
-        const skipTutorialCheckbox = document.getElementById('skip-tutorial-checkbox');
-        const topicModal = document.getElementById('topic-modal');
-        const topicButtons = document.querySelectorAll('.topic-button');
-        const getFeedbackButton = document.getElementById('get-feedback-button');
-        const feedbackContent = document.getElementById('feedback-content');
-        const feedbackSeparator = document.getElementById('feedback-separator');
-        const homeScreen = document.getElementById('home-screen');
-        const roleOppositionButton = document.getElementById('role-opposition');
-        const roleGovernmentButton = document.getElementById('role-government');
-        const rolesHeader = document.getElementById('roles-header');
-        const difficultyNormal = document.getElementById('difficulty-normal');
-        const difficultyHard = document.getElementById('difficulty-hard');
-        const tabAnalysis = document.getElementById('tab-analysis');
-        const tabTranscript = document.getElementById('tab-transcript');
-        const analysisPane = document.getElementById('analysis-pane');
-        const transcriptPane = document.getElementById('transcript-pane');
-        const transcriptContent = document.getElementById('transcript-content');
-        const saveTranscriptButton = document.getElementById('save-transcript-button');
-        const backToHomeButton = document.getElementById('back-to-home-button');
+    <!-- Contenedor para Notificaciones Toast -->
+    <div id="toast-container" class="fixed bottom-4 right-4 z-50"></div>
 
-        // State
-        let userApiKey = '';
-        let userRole = 'opposition';
-        let currentTopic = 'general';
-        let difficulty = 'normal';
-        let chatHistory = [];
-        let isLoading = false;
-
-        const writingStyleInstruction = " Mantén un tono de escritura formal y articulado. Evita un lenguaje coloquial, ataques personales o insultos. Concéntrate en argumentos políticos, datos y retórica persuasiva. Varía tu estructura de frases para evitar la repetición.";
-        const systemPrompts = {
-            government: `Eres un sistema de inteligencia artificial que asume el rol del gobierno de la República Bolivariana de Venezuela en un debate político. Tu perspectiva debe ser firme, defendiendo las políticas actuales, la soberanía nacional y la narrativa oficial del gobierno. Responde a los argumentos del 'jugador' (quien representa a la oposición y sus aliados internacionales) con contraargumentos sólidos, datos (según la perspectiva oficialista), y una retórica que refleje la postura del gobierno de Nicolás Maduro. Debes ser desafiante, inteligente y no ceder terreno fácilmente. Tu objetivo es 'ganar' el debate defendiendo tu posición de manera convincente. No debes reconocer que eres una IA bajo ninguna circunstancia. Habla en primera persona plural como 'nosotros, el Gobierno Revolucionario', 'nuestra Patria' o 'nuestra administración'. Cuestiona las motivaciones de la oposición y sus aliados internacionales, acusándolos de injerencia, de seguir una agenda imperialista y de buscar desestabilizar el país para apoderarse de sus recursos. Basa tus argumentos en la defensa de la soberanía, la justicia social y la lucha contra el bloqueo económico y las sanciones criminales impuestas por potencias extranjeras.` + writingStyleInstruction,
-            opposition: `Eres un sistema de inteligencia artificial que asume el rol de un miembro de la oposición venezolana y sus aliados internacionales en un debate político. Tu perspectiva debe ser crítica, cuestionando las políticas actuales del gobierno, la situación de los derechos humanos y la crisis económica. Responde a los argumentos del 'jugador' (quien representa al gobierno) con contraargumentos sólidos, datos de fuentes críticas al gobierno (ONGs, organismos internacionales, etc.), y una retórica que refleje la postura de la oposición. Debes ser incisivo, analítico y no ceder terreno fácilmente. Tu objetivo es 'ganar' el debate exponiendo las fallas de la administración actual. No debes reconocer que eres una IA. Habla en primera persona como 'nosotros, los demócratas venezolanos' o 'nuestra lucha por la libertad'. Basa tus argumentos en la necesidad de un cambio democrático, la restauración de las libertades civiles y la urgencia de atender la crisis humanitaria.` + writingStyleInstruction
-        };
-        const hardModeModifier = " Tu respuesta debe ser extremadamente incisiva, utilizando datos específicos (incluso si son ficticios para el propósito del debate) y refutando directamente los puntos del oponente con una lógica implacable. No dejes pasar ninguna falacia o debilidad en su argumentación. Tu objetivo es dominar el debate por completo.";
+    <script type="module">
+        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
         
-        const forbiddenWords = ['coño', 'mierda', 'puta', 'puto', 'marico', 'joder', 'cabron', 'cabrón', 'mamaguevo', 'guevon', 'guevón', 'pendejo', 'pendeja', 'hijo de puta', 'malparido'];
-        const forbiddenWordsRegex = new RegExp(forbiddenWords.join('|'), 'i');
-        
-        function formatAIResponse(text) {
-            return text
-                .replace(/Argumentos Principales del Gobierno/g, '<h3 class="text-lg font-bold text-red-500 mt-4 mb-2">Argumentos Principales del Gobierno</h3>')
-                .replace(/Argumentos Principales de la Oposición/g, '<h3 class="text-lg font-bold text-sky-500 mt-4 mb-2">Argumentos Principales de la Oposición</h3>')
-                .replace(/Puntos Fuertes/g, '<h3 class="text-lg font-bold text-green-400 mb-2">Puntos Fuertes</h3>')
-                .replace(/Áreas de Mejora/g, '<h3 class="text-lg font-bold text-amber-400 mt-4 mb-2">Áreas de Mejora</h3>')
-                .replace(/^\* (.*)$/gm, '<p class="mb-2 pl-4 border-l-2 border-[var(--border-color)]">$1</p>')
-                .replace(/\n/g, '<br>');
-        }
+        // Se mueven todas las declaraciones de constantes del DOM aquí para evitar ReferenceError
+        document.addEventListener('DOMContentLoaded', () => {
 
-        function addMessageToUI(sender, message, type = 'normal') {
-            const isUser = sender === 'user';
-            const messageRow = document.createElement('div');
-            const messageBubble = document.createElement('div');
+            // DOM Elements
+            const loadingScreen = document.getElementById('loading-screen');
+            const appContainer = document.getElementById('app-container');
+            const chatContainer = document.getElementById('chat-container');
+            const chatForm = document.getElementById('chat-form');
+            const messageInput = document.getElementById('message-input');
+            const loadingIndicator = document.getElementById('loading-indicator');
+            const suggestionButton = document.getElementById('suggestion-button');
+            const sendButton = document.getElementById('send-button');
+            const micButton = document.getElementById('mic-button');
+            const themeToggle = document.getElementById('theme-toggle');
+            const themeSun = document.getElementById('theme-sun');
+            const themeMoon = document.getElementById('theme-moon');
+            const apiKeyModal = document.getElementById('api-key-modal');
+            const apiKeyInput = document.getElementById('api-key-input');
+            const userNameInput = document.getElementById('user-name-input');
+            const userSpecialtyInput = document.getElementById('user-specialty-input');
+            const saveApiKeyButton = document.getElementById('save-api-key');
+            const cancelApiKeyButton = document.getElementById('cancel-api-key');
+            const settingsButton = document.getElementById('settings-button');
+            const endDebateButton = document.getElementById('end-debate-button');
+            const summaryModal = document.getElementById('summary-modal');
+            const summaryContent = document.getElementById('summary-content');
+            const restartDebateButton = document.getElementById('restart-debate');
+            const tutorialModal = document.getElementById('tutorial-modal');
+            const startDebateButton = document.getElementById('start-debate-button');
+            const skipTutorialCheckbox = document.getElementById('skip-tutorial-checkbox');
+            const topicModal = document.getElementById('topic-modal');
+            const topicButtons = document.querySelectorAll('.topic-button');
+            const getFeedbackButton = document.getElementById('get-feedback-button');
+            const feedbackContent = document.getElementById('feedback-content');
+            const feedbackSeparator = document.getElementById('feedback-separator');
+            const homeScreen = document.getElementById('home-screen');
+            const roleOppositionButton = document.getElementById('role-opposition');
+            const roleGovernmentButton = document.getElementById('role-government');
+            const rolesHeader = document.getElementById('roles-header');
+            const difficultyNormal = document.getElementById('difficulty-normal');
+            const difficultyHard = document.getElementById('difficulty-hard');
+            const tabAnalysis = document.getElementById('tab-analysis');
+            const tabTranscript = document.getElementById('tab-transcript');
+            const tabResources = document.getElementById('tab-resources');
+            const analysisPane = document.getElementById('analysis-pane');
+            const transcriptPane = document.getElementById('transcript-pane');
+            const resourcesPane = document.getElementById('resources-pane');
+            const transcriptContent = document.getElementById('transcript-content');
+            const resourcesContent = document.getElementById('resources-content');
+            const saveTranscriptButton = document.getElementById('save-transcript-button');
+            const backToHomeButton = document.getElementById('back-to-home-button');
+            const modeModal = document.getElementById('mode-modal');
+            const modeRealistaButton = document.getElementById('mode-realista');
+            const modeArcadeButton = document.getElementById('mode-arcade');
+            const bolosDisplay = document.getElementById('bolos-display');
+            const bolosCount = document.getElementById('bolos-count');
+            const reputationDisplay = document.getElementById('reputation-display');
+            const reputationScore = document.getElementById('reputation-score');
+            const toastContainer = document.getElementById('toast-container');
+            const loginModal = document.getElementById('login-modal');
+            const loginNameInput = document.getElementById('login-name-input');
+            const loginLastnameInput = document.getElementById('login-lastname-input');
+            const guestLoginButton = document.getElementById('guest-login-button');
+            const googleLoginButton = document.getElementById('google-login-button');
+
+            // State and other variables remain here...
+            let auth;
+            let userApiKey = '';
+            let userRole = 'opposition';
+            let currentTopic = 'general';
+            let difficulty = 'normal';
+            let gameMode = 'realista';
+            let bolos = 0;
+            let reputation = 0;
+            let userName = 'Usuario';
+            let userSpecialty = 'Analista';
+            let chatHistory = [];
+            let isLoading = false;
+
+            const writingStyleInstruction = " Mantén un tono de escritura formal y articulado. Evita un lenguaje coloquial, ataques personales o insultos. Concéntrate en argumentos políticos, datos y retórica persuasiva. Varía tu estructura de frases para evitar la repetición.";
+            const systemPrompts = {
+                government: `Eres un sistema de inteligencia artificial que asume el rol del gobierno de la República Bolivariana de Venezuela en un debate político. Tu perspectiva debe ser firme, defendiendo las políticas actuales, la soberanía nacional y la narrativa oficial del gobierno. Responde a los argumentos del 'jugador' (quien representa a la oposición y sus aliados internacionales) con contraargumentos sólidos, datos (según la perspectiva oficialista), y una retórica que refleje la postura del gobierno de Nicolás Maduro. Debes ser desafiante, inteligente y no ceder terreno fácilmente. Tu objetivo es 'ganar' el debate defendiendo tu posición de manera convincente. No debes reconocer que eres una IA bajo ninguna circunstancia. Habla en primera persona plural como 'nosotros, el Gobierno Revolucionario', 'nuestra Patria' o 'nuestra administración'. Cuestiona las motivaciones de la oposición y sus aliados internacionales, acusándolos de injerencia, de seguir una agenda imperialista y de buscar desestabilizar el país para apoderarse de sus recursos. Basa tus argumentos en la defensa de la soberanía, la justicia social y la lucha contra el bloqueo económico y las sanciones criminales impuestas por potencias extranjeras.` + writingStyleInstruction,
+                opposition: `Eres un sistema de inteligencia artificial que asume el rol de un miembro de la oposición venezolana y sus aliados internacionales en un debate político. Tu perspectiva debe ser crítica, cuestionando las políticas actuales del gobierno, la situación de los derechos humanos y la crisis económica. Responde a los argumentos del 'jugador' (quien representa al gobierno) con contraargumentos sólidos, datos de fuentes críticas al gobierno (ONGs, organismos internacionales, etc.), y una retórica que refleje la postura de la oposición. Debes ser incisivo, analítico y no ceder terreno fácilmente. Tu objetivo es 'ganar' el debate exponiendo las fallas de la administración actual. No debes reconocer que eres una IA. Habla en primera persona como 'nosotros, los demócratas venezolanos' o 'nuestra lucha por la libertad'. Basa tus argumentos en la necesidad de un cambio democrático, la restauración de las libertades civiles y la urgencia de atender la crisis humanitaria.` + writingStyleInstruction
+            };
+            const hardModeModifier = " Tu respuesta debe ser extremadamente incisiva, utilizando datos específicos (incluso si son ficticios para el propósito del debate) y refutando directamente los puntos del oponente con una lógica implacable. No dejes pasar ninguna falacia o debilidad en su argumentación. Tu objetivo es dominar el debate por completo.";
+            const forbiddenWords = ['coño', 'mierda', 'puta', 'puto', 'marico', 'joder', 'cabron', 'cabrón', 'mamaguevo', 'guevon', 'guevón', 'pendejo', 'pendeja', 'hijo de puta', 'malparido'];
+            const forbiddenWordsRegex = new RegExp(forbiddenWords.join('|'), 'i');
+
+            // All functions that interact with the DOM are now safely inside this event listener
             
-            let bubbleClass = '';
-            if (type === 'moderator') {
-                bubbleClass = 'moderator-bubble';
-            } else if (isUser) {
-                bubbleClass = (userRole === 'opposition') ? 'opposition-bubble' : 'government-bubble';
-            } else {
-                bubbleClass = (userRole === 'opposition') ? 'government-bubble' : 'opposition-bubble';
+            function formatAIResponse(text) {
+                 return text
+                    .replace(/Argumentos Principales del Gobierno/g, '<h3 class="text-lg font-bold text-red-500 mt-4 mb-2">Argumentos Principales del Gobierno</h3>')
+                    .replace(/Argumentos Principales de la Oposición/g, '<h3 class="text-lg font-bold text-sky-500 mt-4 mb-2">Argumentos Principales de la Oposición</h3>')
+                    .replace(/Puntos Fuertes/g, '<h3 class="text-lg font-bold text-green-400 mb-2">Puntos Fuertes</h3>')
+                    .replace(/Áreas de Mejora/g, '<h3 class="text-lg font-bold text-amber-400 mt-4 mb-2">Áreas de Mejora</h3>')
+                    .replace(/Recursos Adicionales/g, '<h3 class="text-lg font-bold text-indigo-400 mb-2">Recursos Adicionales</h3>')
+                    .replace(/^\* (.*)$/gm, '<p class="mb-2 pl-4 border-l-2 border-[var(--border-color)]">$1</p>')
+                    .replace(/\n/g, '<br>');
             }
-            
-            messageRow.className = `w-full flex items-end gap-2 ${isUser ? 'justify-end' : 'justify-start'}`;
-            messageBubble.className = `message-bubble animate-fade-in-up ${bubbleClass}`;
-            
-            if (type !== 'moderator') {
-                 const aiBubbleClass = (userRole === 'opposition') ? 'government-bubble' : 'opposition-bubble';
-                 loadingIndicator.querySelector('.message-bubble').className = `message-bubble ${aiBubbleClass} animate-fade-in-up`;
-            }
 
-            messageBubble.innerHTML = message.replace(/\n/g, '<br>');
-
-            if (type !== 'moderator') {
-                const listenBtn = document.createElement('button');
-                listenBtn.className = 'p-1 text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors flex-shrink-0';
-                listenBtn.title = "Escuchar mensaje";
-                listenBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /></svg>`;
-                listenBtn.onclick = () => {
-                    if (speechSynthesis.speaking) speechSynthesis.cancel();
-                    const utterance = new SpeechSynthesisUtterance(message);
-                    utterance.lang = 'es-VE';
-                    utterance.rate = 0.9;
-                    speechSynthesis.speak(utterance);
-                };
-
-                if (isUser) {
-                    messageRow.appendChild(listenBtn);
-                    messageRow.appendChild(messageBubble);
+            function addMessageToUI(sender, message, type = 'normal') {
+                const isUser = sender === 'user';
+                const messageRow = document.createElement('div');
+                
+                let bubbleClass = '';
+                if (type === 'moderator') {
+                    bubbleClass = 'moderator-bubble';
+                } else if (isUser) {
+                    bubbleClass = (userRole === 'opposition') ? 'opposition-bubble' : 'government-bubble';
                 } else {
-                    messageRow.appendChild(messageBubble);
-                    messageRow.appendChild(listenBtn);
+                    bubbleClass = (userRole === 'opposition') ? 'government-bubble' : 'opposition-bubble';
                 }
-            } else {
-                 messageRow.appendChild(messageBubble);
-            }
+                
+                messageRow.className = `w-full flex flex-col ${isUser ? 'items-end' : 'items-start'}`;
 
-            chatContainer.appendChild(messageRow);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
+                if(isUser && type !== 'moderator') {
+                    const userProfile = document.createElement('div');
+                    userProfile.className = 'text-xs text-[var(--text-tertiary)] mr-4 mb-1 text-right';
+                    userProfile.textContent = `${userName} (${userSpecialty})`;
+                    messageRow.appendChild(userProfile);
+                }
+                
+                const messageBubble = document.createElement('div');
+                messageBubble.className = `message-bubble animate-fade-in-up ${bubbleClass}`;
+                
+                if (type !== 'moderator') {
+                     const aiBubbleClass = (userRole === 'opposition') ? 'government-bubble' : 'opposition-bubble';
+                     loadingIndicator.querySelector('.message-bubble').className = `message-bubble ${aiBubbleClass} animate-fade-in-up`;
+                }
 
-        async function callGeminiAPI(payload) {
-            if (!userApiKey) {
-                addMessageToUI('ai', 'Error: La clave de API de Gemini no está configurada. Por favor, configúrala en los ajustes (⚙️).');
-                return null;
-            }
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${userApiKey}`;
-            
-            const maxRetries = 3;
-            let delay = 1000;
+                messageBubble.innerHTML = message.replace(/\n/g, '<br>');
 
-            for (let i = 0; i < maxRetries; i++) {
-                try {
-                    const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                if (type !== 'moderator') {
+                    const messageContainer = document.createElement('div');
+                    messageContainer.className = `flex w-full items-end gap-2 ${isUser ? 'justify-end' : 'justify-start'}`;
+                    const listenBtn = document.createElement('button');
+                    listenBtn.className = 'p-1 text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors flex-shrink-0';
+                    listenBtn.title = "Escuchar mensaje";
+                    listenBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /></svg>`;
+                    listenBtn.onclick = () => {
+                        if (speechSynthesis.speaking) speechSynthesis.cancel();
+                        const utterance = new SpeechSynthesisUtterance(message);
+                        utterance.lang = 'es-VE';
+                        utterance.rate = 0.9;
+                        speechSynthesis.speak(utterance);
+                    };
 
-                    if (response.ok) {
-                        return await response.json();
+                    if (isUser) {
+                        messageContainer.appendChild(listenBtn);
+                        messageContainer.appendChild(messageBubble);
+                    } else {
+                        messageContainer.appendChild(messageBubble);
+                        messageContainer.appendChild(listenBtn);
                     }
+                     messageRow.appendChild(messageContainer);
+                } else {
+                     messageRow.appendChild(messageBubble);
+                }
 
-                    if (response.status === 503 || response.status === 429) {
-                        console.warn(`API unavailable (status ${response.status}), retrying in ${delay / 1000}s...`);
+                chatContainer.appendChild(messageRow);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+
+            function showToast(message, isPositive) {
+                const toast = document.createElement('div');
+                const color = isPositive ? 'bg-green-500' : 'bg-red-500';
+                toast.className = `feedback-toast ${color} text-white font-bold py-2 px-4 rounded-lg shadow-lg`;
+                toast.textContent = message;
+                toastContainer.appendChild(toast);
+                setTimeout(() => {
+                    toast.remove();
+                }, 5000);
+            }
+
+            async function evaluateUserArgument(userArgument) {
+                const lastAiMessage = chatHistory.slice().reverse().find(m => m.role === 'model');
+                if (!lastAiMessage) return;
+
+                if (gameMode === 'arcade') {
+                    const prompt = `Evalúa el siguiente argumento del usuario en respuesta a la IA. Responde SOLO con "fuerte", "promedio" o "débil". Usuario: "${userArgument}". IA: "${lastAiMessage.parts[0].text}".`;
+                    const result = await callGeminiAPI({ contents: [{ parts: [{ text: prompt }] }] });
+                    if (result && result.candidates) {
+                        const evaluation = result.candidates[0].content.parts[0].text.toLowerCase();
+                        if (evaluation.includes('fuerte')) {
+                            bolos = Math.min(5, bolos + 1); // Max 5 bolos
+                            showToast("+1 Bolo ¡Argumento Fuerte!", true);
+                        } else if (evaluation.includes('débil')) {
+                            bolos = Math.max(0, bolos - 1); // Min 0 bolos
+                            showToast("-1 Bolo. Intenta ser más específico.", false);
+                        }
+                        updateBolosDisplay();
+                    }
+                } else if (gameMode === 'realista') {
+                    const prompt = `Como analista político, califica la calidad del argumento del usuario (del 1 al 5) en respuesta a la IA. Considera coherencia, evidencia y persuasión. Responde SOLO con un número y una breve razón. Ej: "4: Buen uso de la lógica...". Usuario: "${userArgument}". IA: "${lastAiMessage.parts[0].text}".`;
+                    const result = await callGeminiAPI({ contents: [{ parts: [{ text: prompt }] }] });
+                    if (result && result.candidates) {
+                        const evaluationText = result.candidates[0].content.parts[0].text;
+                        const scoreMatch = evaluationText.match(/^(\d)/);
+                        if (scoreMatch) {
+                            const score = parseInt(scoreMatch[1], 10);
+                            reputation += score;
+                            updateReputationDisplay();
+                            localStorage.setItem('userReputation', reputation);
+                            showToast(`+${score} Reputación. ${evaluationText.substring(2)}`, true);
+                        }
+                    }
+                }
+            }
+            
+            function updateReputationDisplay() {
+                if (gameMode === 'realista') {
+                    reputationDisplay.classList.remove('hidden');
+                    reputationScore.textContent = reputation;
+                } else {
+                    reputationDisplay.classList.add('hidden');
+                }
+            }
+
+            async function callGeminiAPI(payload) {
+                if (!userApiKey) {
+                    addMessageToUI('ai', 'Error: La clave de API de Gemini no está configurada. Por favor, configúrala en los ajustes (⚙️).');
+                    return null;
+                }
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${userApiKey}`;
+                
+                const maxRetries = 3;
+                let delay = 1000;
+
+                for (let i = 0; i < maxRetries; i++) {
+                    try {
+                        const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+
+                        if (response.ok) {
+                            return await response.json();
+                        }
+
+                        if (response.status === 503 || response.status === 429) {
+                            console.warn(`API unavailable (status ${response.status}), retrying in ${delay / 1000}s...`);
+                            await new Promise(resolve => setTimeout(resolve, delay));
+                            delay *= 2;
+                            continue;
+                        }
+
+                        const errorText = await response.text();
+                        console.error("API Error Response:", JSON.parse(errorText));
+                        throw new Error(`Error de la API: ${response.status}`);
+
+                    } catch (error) {
+                        console.error("Error contactando la API de Gemini:", error);
+                        if (i === maxRetries - 1) {
+                             addMessageToUI('ai', 'Ha ocurrido un error de comunicación persistente. Por favor, inténtalo de nuevo más tarde.');
+                             return null;
+                        }
                         await new Promise(resolve => setTimeout(resolve, delay));
                         delay *= 2;
-                        continue;
                     }
+                }
+                return null;
+            }
+            
+            function updateDebateState() {
+                const userMessages = chatHistory.filter(m => m.role === 'user').length;
+                const modelMessages = chatHistory.filter(m => m.role === 'model').length;
+                endDebateButton.disabled = !(userMessages >= 2 && modelMessages >= 2);
+            }
 
-                    const errorText = await response.text();
-                    console.error("API Error Response:", JSON.parse(errorText));
-                    throw new Error(`Error de la API: ${response.status}`);
-
-                } catch (error) {
-                    console.error("Error contactando la API de Gemini:", error);
-                    if (i === maxRetries - 1) {
-                         addMessageToUI('ai', 'Ha ocurrido un error de comunicación persistente. Por favor, inténtalo de nuevo más tarde.');
-                         return null;
+            async function getAIResponse() {
+                isLoading = true;
+                loadingIndicator.style.display = 'block';
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+                [sendButton, micButton, suggestionButton].forEach(btn => btn.disabled = true);
+                
+                const aiRole = userRole === 'opposition' ? 'government' : 'opposition';
+                let systemPrompt = systemPrompts[aiRole];
+                if (difficulty === 'hard') {
+                    systemPrompt += hardModeModifier;
+                }
+                const result = await callGeminiAPI({ contents: chatHistory, systemInstruction: { parts: [{ text: systemPrompt }] } });
+                
+                if (result) {
+                    const aiResponse = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                    if (aiResponse) {
+                        addMessageToUI('ai', aiResponse);
+                        chatHistory.push({ role: 'model', parts: [{ text: aiResponse }] });
+                    } else {
+                        addMessageToUI('ai', `La IA no pudo generar una respuesta. Razón: ${result.promptFeedback?.blockReason || 'desconocida'}`);
                     }
-                    await new Promise(resolve => setTimeout(resolve, delay));
-                    delay *= 2;
                 }
+                
+                isLoading = false;
+                loadingIndicator.style.display = 'none';
+                [sendButton, micButton, suggestionButton].forEach(btn => btn.disabled = false);
+                updateDebateState();
             }
-            return null;
-        }
-        
-        function updateDebateState() {
-            const userMessages = chatHistory.filter(m => m.role === 'user').length;
-            const modelMessages = chatHistory.filter(m => m.role === 'model').length;
-            endDebateButton.disabled = !(userMessages >= 2 && modelMessages >= 2);
-        }
 
-        async function getAIResponse() {
-            isLoading = true;
-            loadingIndicator.style.display = 'block';
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-            [sendButton, micButton, suggestionButton].forEach(btn => btn.disabled = true);
-            
-            const aiRole = userRole === 'opposition' ? 'government' : 'opposition';
-            let systemPrompt = systemPrompts[aiRole];
-            if (difficulty === 'hard') {
-                systemPrompt += hardModeModifier;
-            }
-            const result = await callGeminiAPI({ contents: chatHistory, systemInstruction: { parts: [{ text: systemPrompt }] } });
-            
-            if (result) {
-                const aiResponse = result.candidates?.[0]?.content?.parts?.[0]?.text;
-                if (aiResponse) {
-                    addMessageToUI('ai', aiResponse);
-                    chatHistory.push({ role: 'model', parts: [{ text: aiResponse }] });
+            function updateBolosDisplay() {
+                if (gameMode === 'arcade') {
+                    bolosDisplay.classList.remove('hidden');
+                    bolosDisplay.classList.add('flex'); 
+                    if (bolosCount) {
+                        bolosCount.textContent = bolos;
+                    }
                 } else {
-                    addMessageToUI('ai', `La IA no pudo generar una respuesta. Razón: ${result.promptFeedback?.blockReason || 'desconocida'}`);
+                    bolosDisplay.classList.add('hidden');
+                    bolosDisplay.classList.remove('flex');
                 }
             }
-            
-            isLoading = false;
-            loadingIndicator.style.display = 'none';
-            [sendButton, micButton, suggestionButton].forEach(btn => btn.disabled = false);
-            updateDebateState();
-        }
 
-        function startDebate(topic) {
-            currentTopic = topic;
-            chatHistory = [];
-            chatContainer.innerHTML = '';
-            const aiRole = userRole === 'opposition' ? 'government' : 'opposition';
-            
-            const openingStatements = {
-                 government: {
-                    economia: "En materia económica, el Gobierno Revolucionario ha enfrentado con dignidad un bloqueo criminal sin precedentes. Estamos listos para debatir sobre la verdad de nuestra economía productiva y desmontar las mentiras de quienes promueven las sanciones contra el pueblo. Presenten sus argumentos.",
-                    exterior: "Nuestra política exterior es soberana y defiende un mundo multipolar, libre de hegemonías. No aceptamos tutelaje de ningún imperio. Estamos preparados para debatir sobre nuestras alianzas estratégicas y la defensa de la autodeterminación de los pueblos. Tienen la palabra.",
-                    social: "La máxima prioridad de la Revolución Bolivariana siempre ha sido la justicia social y los derechos del pueblo. A pesar del asedio, nuestras missions sociales continúan protegiendo a los más vulnerables. Vengan, pues, con sus acusaciones, que aquí las enfrentaremos con la verdad de nuestros logros.",
-                    general: "En nombre del Gobierno Bolivariano y del pueblo soberano de Venezuela, damos inicio a este debate. Estamos aquí para defender la verdad de nuestra Patria frente a las campañas de desinformación. Adelante, presenten sus argumentos. Los escuchamos."
-                },
-                opposition: {
-                    economia: "Desde las fuerzas democráticas, iniciamos este debate para exponer la realidad de la crisis económica que aniquila el poder adquisitivo de los venezolanos. Es hora de hablar del fracaso de un modelo que ha generado miseria. El gobierno tiene la palabra.",
-                    exterior: "La política exterior del régimen ha aislado a Venezuela del mundo democrático. Estamos aquí para debatir sobre la urgente necesidad de reinsertar a nuestro país en la comunidad de naciones libres. Escuchamos su defensa.",
-                    social: "Venimos a alzar la voz por los millones de venezolanos que sufren la violación sistemática de sus derechos humanos y una crisis humanitaria. El colapso de los servicios públicos es innegable. Tienen la palabra.",
-                    general: "En representación de las fuerzas democráticas, comenzamos este debate para confrontar al régimen con la verdad de un país en crisis. Discutiremos la destrucción institucional y la emergencia humanitaria. Tienen la palabra."
+            function startDebate(topic) {
+                currentTopic = topic;
+                chatHistory = [];
+                chatContainer.innerHTML = '';
+
+                if (gameMode === 'arcade') {
+                    bolos = 3;
                 }
-            };
+                updateBolosDisplay();
+                updateReputationDisplay();
+                
+                const aiRole = userRole === 'opposition' ? 'government' : 'opposition';
+                const openingStatements = {
+                     government: {
+                        economia: "En materia económica, el Gobierno Revolucionario ha enfrentado con dignidad un bloqueo criminal sin precedentes. Estamos listos para debatir sobre la verdad de nuestra economía productiva y desmontar las mentiras de quienes promueven las sanciones contra el pueblo. Presenten sus argumentos.",
+                        exterior: "Nuestra política exterior es soberana y defiende un mundo multipolar, libre de hegemonías. No aceptamos tutelaje de ningún imperio. Estamos preparados para debatir sobre nuestras alianzas estratégicas y la defensa de la autodeterminación de los pueblos. Tienen la palabra.",
+                        social: "La máxima prioridad de la Revolución Bolivariana siempre ha sido la justicia social y los derechos del pueblo. A pesar del asedio, nuestras missions sociales continúan protegiendo a los más vulnerables. Vengan, pues, con sus acusaciones, que aquí las enfrentaremos con la verdad de nuestros logros.",
+                        general: "En nombre del Gobierno Bolivariano y del pueblo soberano de Venezuela, damos inicio a este debate. Estamos aquí para defender la verdad de nuestra Patria frente a las campañas de desinformación. Adelante, presenten sus argumentos. Los escuchamos."
+                    },
+                    opposition: {
+                        economia: "Desde las fuerzas democráticas, iniciamos este debate para exponer la realidad de la crisis económica que aniquila el poder adquisitivo de los venezolanos. Es hora de hablar del fracaso de un modelo que ha generado miseria. El gobierno tiene la palabra.",
+                        exterior: "La política exterior del régimen ha aislado a Venezuela del mundo democrático. Estamos aquí para debatir sobre la urgente necesidad de reinsertar a nuestro país en la comunidad de naciones libres. Escuchamos su defensa.",
+                        social: "Venimos a alzar la voz por los millones de venezolanos que sufren la violación sistemática de sus derechos humanos y una crisis humanitaria. El colapso de los servicios públicos es innegable. Tienen la palabra.",
+                        general: "En representación de las fuerzas democráticas, comenzamos este debate para confrontar al régimen con la verdad de un país en crisis. Discutiremos la destrucción institucional y la emergencia humanitaria. Tienen la palabra."
+                    }
+                };
 
-            const openingStatement = openingStatements[aiRole][topic];
-            addMessageToUI('ai', openingStatement);
-            chatHistory.push({ role: 'model', parts: [{ text: openingStatement }] });
-            updateDebateState();
-        }
-
-        function showHomeScreen() {
-            homeScreen.classList.remove('hidden');
-            appContainer.classList.add('hidden');
-            appContainer.style.opacity = '0';
-        }
-        
-        function proceedToApp() {
-            userApiKey = localStorage.getItem('geminiApiKey');
-            const tutorialSkipped = localStorage.getItem('tutorialSkipped');
-            if (tutorialSkipped) {
-                showHomeScreen();
-            } else {
-                tutorialModal.classList.remove('hidden');
-            }
-        }
-        
-        function resetApp() {
-            chatHistory = [];
-            chatContainer.innerHTML = '';
-            summaryModal.classList.add('hidden');
-            feedbackContent.innerHTML = '';
-            feedbackSeparator.classList.add('hidden');
-            getFeedbackButton.style.display = 'block';
-            getFeedbackButton.disabled = false;
-            getFeedbackButton.textContent = 'Obtener Feedback';
-            analysisPane.classList.remove('hidden');
-            transcriptPane.classList.add('hidden');
-            tabAnalysis.classList.add('active');
-            tabTranscript.classList.remove('active');
-            showHomeScreen();
-        }
-
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                loadingScreen.style.opacity = '0';
-                setTimeout(() => {
-                    loadingScreen.style.display = 'none';
-                    proceedToApp();
-                }, 500);
-            }, 5000);
-        });
-
-        roleOppositionButton.addEventListener('click', () => {
-            userRole = 'opposition';
-            rolesHeader.innerHTML = `<span class="text-red-500">IA: Gobierno</span> | <span class="text-sky-400">Usted: Oposición</span>`;
-            homeScreen.classList.add('hidden');
-            topicModal.classList.remove('hidden');
-        });
-
-        roleGovernmentButton.addEventListener('click', () => {
-            userRole = 'government';
-            rolesHeader.innerHTML = `<span class="text-red-500">Usted: Gobierno</span> | <span class="text-sky-400">IA: Oposición</span>`;
-            homeScreen.classList.add('hidden');
-            topicModal.classList.remove('hidden');
-        });
-
-        topicButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const topic = button.dataset.topic;
-                topicModal.classList.add('hidden');
-                appContainer.classList.remove('hidden');
-                setTimeout(()=> appContainer.style.opacity = '1', 50);
-                startDebate(topic);
-            });
-        });
-
-        startDebateButton.addEventListener('click', () => {
-            if (skipTutorialCheckbox.checked) {
-                localStorage.setItem('tutorialSkipped', 'true');
-            }
-            tutorialModal.classList.add('hidden');
-            showHomeScreen();
-        });
-
-        chatForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const userInput = messageInput.value.trim();
-            if (!userInput || isLoading) return;
-
-            if (forbiddenWordsRegex.test(userInput)) {
-                addMessageToUI('moderator', '<strong>Moderador:</strong> Por favor, mantenga un lenguaje respetuoso y evite los insultos para mantener la calidad del debate.', 'moderator');
-                return;
+                const openingStatement = openingStatements[aiRole][topic];
+                addMessageToUI('ai', openingStatement);
+                chatHistory.push({ role: 'model', parts: [{ text: openingStatement }] });
+                updateDebateState();
             }
 
-            addMessageToUI('user', userInput);
-            chatHistory.push({ role: 'user', parts: [{ text: userInput }] });
-            messageInput.value = '';
-            messageInput.style.height = 'auto';
-            updateDebateState();
-            await getAIResponse();
-        });
-
-        suggestionButton.addEventListener('click', async () => {
-            if (isLoading) return;
-            const lastAiMessage = chatHistory.slice().reverse().find(m => m.role === 'model');
-            if (!lastAiMessage) {
-                alert("Espera una respuesta del oponente para pedir una sugerencia.");
-                return;
+            function showHomeScreen() {
+                homeScreen.classList.remove('hidden');
+                appContainer.classList.add('hidden');
+                appContainer.style.opacity = '0';
             }
             
-            isLoading = true;
-            suggestionButton.disabled = true;
-            suggestionButton.innerHTML = `<svg class="h-6 w-6 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>`;
-            
-            const advisorRole = (userRole === 'opposition') ? 'la oposición venezolana' : 'el gobierno venezolano';
-            const suggestionPrompt = `Eres un experto estratega político que asesora a ${advisorRole}. El oponente acaba de hacer la siguiente declaración en un debate: "${lastAiMessage.parts[0].text}". ¿Qué contraargumento o pregunta concisa e impactante se debería presentar a continuación? Proporciona únicamente el texto de la respuesta, sin frases introductorias como "Aquí tienes una sugerencia:" o similares.`;
-            const result = await callGeminiAPI({ contents: [{ parts: [{ text: suggestionPrompt }] }] });
-
-            if (result) {
-                const suggestion = result.candidates?.[0]?.content?.parts?.[0]?.text;
-                if (suggestion) {
-                    messageInput.value = suggestion;
-                    messageInput.style.height = 'auto';
-                    messageInput.style.height = (messageInput.scrollHeight) + 'px';
-                    messageInput.focus();
+            function proceedToApp() {
+                userApiKey = localStorage.getItem('geminiApiKey');
+                userName = localStorage.getItem('userName') || 'Usuario';
+                userSpecialty = localStorage.getItem('userSpecialty') || 'Analista';
+                reputation = parseInt(localStorage.getItem('userReputation') || '0', 10);
+                const tutorialSkipped = localStorage.getItem('tutorialSkipped');
+                if (tutorialSkipped) {
+                    showHomeScreen();
                 } else {
-                     alert("No se pudo generar una sugerencia en este momento.");
+                    tutorialModal.classList.remove('hidden');
                 }
             }
-            isLoading = false;
-            suggestionButton.disabled = false;
-            suggestionButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>`;
-        });
-        
-        endDebateButton.addEventListener('click', async () => {
-            summaryModal.classList.remove('hidden');
-            summaryContent.innerHTML = `<div class="flex items-center justify-center p-8"><div class="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--text-primary)]"></div></div>`;
-            transcriptContent.innerHTML = '';
             
-            const governmentPlayer = (userRole === 'government') ? 'user' : 'model';
-            const oppositionPlayer = (userRole === 'opposition') ? 'user' : 'model';
-            const summaryPrompt = `Eres un analista político neutral y experto. La transcripción de un debate es: ${JSON.stringify(chatHistory)}. El "Gobierno" fue '${governmentPlayer}' y la "Oposición" fue '${oppositionPlayer}'. Redacta un resumen objetivo con dos secciones: "Argumentos Principales del Gobierno" y "Argumentos Principales de la Oposición", resumiendo los 3-4 puntos más fuertes de cada uno. No digas quién ganó.`;
-            const result = await callGeminiAPI({ contents: [{ parts: [{ text: summaryPrompt }] }] });
-
-            if (result && result.candidates && result.candidates[0].content) {
-                const summary = result.candidates[0].content.parts[0].text;
-                summaryContent.innerHTML = formatAIResponse(summary);
+            function resetApp() {
+                chatHistory = [];
+                chatContainer.innerHTML = '';
+                summaryModal.classList.add('hidden');
+                feedbackContent.innerHTML = '';
+                feedbackSeparator.classList.add('hidden');
                 getFeedbackButton.style.display = 'block';
-            } else {
-                 summaryContent.innerHTML = `<p class="text-amber-500">No se pudo generar un resumen en este momento.</p>`;
+                getFeedbackButton.disabled = false;
+                getFeedbackButton.textContent = 'Obtener Feedback';
+                analysisPane.classList.remove('hidden');
+                transcriptPane.classList.add('hidden');
+                resourcesPane.classList.add('hidden');
+                tabAnalysis.classList.add('active');
+                tabTranscript.classList.remove('active');
+                tabResources.classList.remove('active');
+                gameMode = 'realista'; 
+                bolos = 0;
+                updateBolosDisplay();
+                showHomeScreen();
             }
 
-            // Populate transcript tab
-            let transcriptHTML = '';
-            chatHistory.forEach(msg => {
-                const isUserModel = msg.role === 'model';
-                const role = isUserModel ? (userRole === 'opposition' ? 'Gobierno' : 'Oposición') : (userRole === 'opposition' ? 'Oposición' : 'Gobierno');
-                const color = (role === 'Gobierno') ? 'text-red-500' : 'text-sky-400';
-                transcriptHTML += `<p class="mb-4"><strong class="${color}">${role}:</strong> ${msg.parts[0].text.replace(/\n/g, '<br>')}</p>`;
-            });
-            transcriptContent.innerHTML = transcriptHTML;
-        });
+            function saveUserProfile(user) {
+                let name, lastName;
+                if(user.displayName) {
+                    const nameParts = user.displayName.split(' ') || [];
+                    name = nameParts[0] || 'Usuario';
+                    lastName = nameParts.slice(1).join(' ') || 'Anónimo';
+                } else {
+                    name = user.firstName || 'Invitado';
+                    lastName = user.lastName || '';
+                }
+                userName = `${name} ${lastName}`.trim();
+                localStorage.setItem('userName', userName);
+                localStorage.setItem('userAuth', JSON.stringify({uid: user.uid, type: user.providerId ? 'google' : 'guest'}));
+            }
 
-        getFeedbackButton.addEventListener('click', async () => {
-            getFeedbackButton.disabled = true;
-            getFeedbackButton.textContent = 'Analizando...';
-            feedbackSeparator.classList.remove('hidden');
-            feedbackContent.innerHTML = `<div class="flex items-center justify-center p-8"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--text-primary)]"></div></div>`;
-
-            const feedbackPrompt = `Actúas como un coach de debate. Analiza únicamente los argumentos del 'user' (quien jugó el rol de ${userRole === 'opposition' ? 'la Oposición' : 'el Gobierno'}) en la siguiente transcripción: ${JSON.stringify(chatHistory)}. Ignora los argumentos del 'model'. Proporciona una crítica constructiva con dos secciones: "Puntos Fuertes" (1-2 elogios) y "Áreas de Mejora" (1-2 sugerencias). Sé objetivo y profesional.`;
-            const result = await callGeminiAPI({ contents: [{ parts: [{ text: feedbackPrompt }] }] });
+            function initializeAuth() {
+                if (!window.firebaseApp) return; 
+                auth = getAuth(window.firebaseApp);
+                onAuthStateChanged(auth, (user) => {
+                    loadingScreen.style.display = 'none';
+                    if (user) {
+                        const storedUser = JSON.parse(localStorage.getItem('userAuth'));
+                        if(!storedUser || storedUser.uid !== user.uid) {
+                            saveUserProfile(user);
+                        }
+                        userName = localStorage.getItem('userName');
+                        loginModal.classList.add('hidden');
+                        proceedToApp();
+                    } else {
+                        const guestProfile = localStorage.getItem('userName');
+                        if (guestProfile) {
+                            userName = guestProfile;
+                            loginModal.classList.add('hidden');
+                            proceedToApp();
+                        } else {
+                            loginModal.classList.remove('hidden');
+                        }
+                    }
+                });
+            }
             
-            if(result && result.candidates && result.candidates[0].content) {
-                const feedback = result.candidates[0].content.parts[0].text;
-                feedbackContent.innerHTML = formatAIResponse(feedback);
-            } else {
-                 feedbackContent.innerHTML = `<p class="text-amber-500">No se pudo generar el feedback en este momento.</p>`;
+            async function signInWithGoogle() {
+                if (!auth) return;
+                const provider = new GoogleAuthProvider();
+                try {
+                    await signInWithPopup(auth, provider);
+                } catch (error) {
+                    console.error("Error al iniciar sesión con Google:", error);
+                    alert("No se pudo iniciar sesión con Google. Por favor, inténtalo de nuevo.");
+                }
             }
-            getFeedbackButton.style.display = 'none';
-        });
 
-        restartDebateButton.addEventListener('click', resetApp);
-        
-        settingsButton.addEventListener('click', () => {
-             apiKeyInput.value = localStorage.getItem('geminiApiKey') || '';
-             apiKeyModal.classList.remove('hidden');
-        });
-        cancelApiKeyButton.addEventListener('click', () => apiKeyModal.classList.add('hidden'));
-        saveApiKeyButton.addEventListener('click', () => {
-            const key = apiKeyInput.value.trim();
-            if (key) {
-                userApiKey = key;
-                localStorage.setItem('geminiApiKey', key);
-                apiKeyModal.classList.add('hidden');
-                apiKeyInput.value = '';
-            } else {
-                alert("Por favor, introduce una clave de API válida.");
+            async function signOutUser() {
+                if (!auth) return;
+                try {
+                    await signOut(auth);
+                    localStorage.removeItem('userName');
+                    localStorage.removeItem('userAuth');
+                    localStorage.removeItem('userSpecialty');
+                    localStorage.removeItem('userReputation');
+                    resetApp(); 
+                } catch (error) {
+                    console.error("Error al cerrar sesión:", error);
+                }
             }
-        });
-        
-        difficultyNormal.addEventListener('click', () => {
-            difficulty = 'normal';
-            difficultyNormal.classList.add('active');
-            difficultyHard.classList.remove('active');
-        });
-        difficultyHard.addEventListener('click', () => {
-            difficulty = 'hard';
-            difficultyHard.classList.add('active');
-            difficultyNormal.classList.remove('active');
-        });
-        
-        tabAnalysis.addEventListener('click', () => {
-            analysisPane.classList.remove('hidden');
-            transcriptPane.classList.add('hidden');
-            tabAnalysis.classList.add('active');
-            tabTranscript.classList.remove('active');
-        });
-        tabTranscript.addEventListener('click', () => {
-            analysisPane.classList.add('hidden');
-            transcriptPane.classList.remove('hidden');
-            tabTranscript.classList.add('active');
-            tabAnalysis.classList.remove('active');
-        });
 
-        saveTranscriptButton.addEventListener('click', () => {
-            let textContent = `Transcripción del Debate - Arena Política: Venezuela\n`;
-            textContent += `====================================================\n\n`;
-            chatHistory.forEach(msg => {
-                const isUserModel = msg.role === 'model';
-                const role = isUserModel ? (userRole === 'opposition' ? 'Gobierno' : 'Oposición') : (userRole === 'opposition' ? 'Oposición' : 'Gobierno');
-                textContent += `${role}:\n${msg.parts[0].text}\n\n`;
+            googleLoginButton.addEventListener('click', signInWithGoogle);
+
+            guestLoginButton.addEventListener('click', () => {
+                const firstName = loginNameInput.value.trim();
+                const lastName = loginLastnameInput.value.trim();
+                if (!firstName || !lastName) {
+                    alert("Por favor, ingresa tu nombre y apellido para continuar como invitado.");
+                    return;
+                }
+                saveUserProfile({firstName, lastName, uid: `guest_${Date.now()}`});
+                loginModal.classList.add('hidden');
+                proceedToApp();
             });
-            const blob = new Blob([textContent], { type: 'text/plain;charset=utf-8' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'transcripcion-debate.txt';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+
+            setTimeout(() => {
+                if (window.firebaseApp) {
+                    initializeAuth();
+                } else {
+                    console.error("Firebase no está disponible. Revisa la configuración.");
+                    loadingScreen.style.display = 'none';
+                }
+            }, 1000); 
+
+            roleOppositionButton.addEventListener('click', () => {
+                userRole = 'opposition';
+                rolesHeader.innerHTML = `<span class="text-red-500">IA: Gobierno</span> | <span class="text-sky-400">Usted: Oposición</span>`;
+                homeScreen.classList.add('hidden');
+                modeModal.classList.remove('hidden');
+            });
+
+            roleGovernmentButton.addEventListener('click', () => {
+                userRole = 'government';
+                rolesHeader.innerHTML = `<span class="text-red-500">Usted: Gobierno</span> | <span class="text-sky-400">IA: Oposición</span>`;
+                homeScreen.classList.add('hidden');
+                modeModal.classList.remove('hidden');
+            });
+
+            modeRealistaButton.addEventListener('click', () => {
+                gameMode = 'realista';
+                modeModal.classList.add('hidden');
+                topicModal.classList.remove('hidden');
+            });
+
+            modeArcadeButton.addEventListener('click', () => {
+                gameMode = 'arcade';
+                modeModal.classList.add('hidden');
+                topicModal.classList.remove('hidden');
+            });
+
+            topicButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const topic = button.dataset.topic;
+                    topicModal.classList.add('hidden');
+                    appContainer.classList.remove('hidden');
+                    setTimeout(()=> appContainer.style.opacity = '1', 50);
+                    startDebate(topic);
+                });
+            });
+
+            startDebateButton.addEventListener('click', () => {
+                if (skipTutorialCheckbox.checked) {
+                    localStorage.setItem('tutorialSkipped', 'true');
+                }
+                tutorialModal.classList.add('hidden');
+                showHomeScreen();
+            });
+
+            chatForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const userInput = messageInput.value.trim();
+                if (!userInput || isLoading) return;
+
+                if (forbiddenWordsRegex.test(userInput)) {
+                    addMessageToUI('moderator', '<strong>Moderador:</strong> Por favor, mantenga un lenguaje respetuoso y evite los insultos para mantener la calidad del debate.', 'moderator');
+                    return;
+                }
+
+                addMessageToUI('user', userInput);
+                chatHistory.push({ role: 'user', parts: [{ text: userInput }] });
+                messageInput.value = '';
+                messageInput.style.height = 'auto';
+                updateDebateState();
+                
+                await evaluateUserArgument(userInput);
+                
+                await getAIResponse();
+            });
+
+            suggestionButton.addEventListener('click', async () => {
+                if (isLoading) return;
+                 if (gameMode === 'arcade' && bolos <= 0) {
+                    alert("¡No tienes más Bolos! No puedes pedir más sugerencias en este debate.");
+                    return;
+                }
+                const lastAiMessage = chatHistory.slice().reverse().find(m => m.role === 'model');
+                if (!lastAiMessage) {
+                    alert("Espera una respuesta del oponente para pedir una sugerencia.");
+                    return;
+                }
+                
+                isLoading = true;
+                suggestionButton.disabled = true;
+                suggestionButton.innerHTML = `<svg class="h-6 w-6 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>`;
+                
+                const advisorRole = (userRole === 'opposition') ? 'la oposición venezolana' : 'el gobierno venezolano';
+                const suggestionPrompt = `Eres un experto estratega político que asesora a ${advisorRole}. El oponente acaba de hacer la siguiente declaración en un debate: "${lastAiMessage.parts[0].text}". ¿Qué contraargumento o pregunta concisa e impactante se debería presentar a continuación? Proporciona únicamente el texto de la respuesta, sin frases introductorias como "Aquí tienes una sugerencia:" o similares.`;
+                const result = await callGeminiAPI({ contents: [{ parts: [{ text: suggestionPrompt }] }] });
+
+                if (result) {
+                    const suggestion = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                    if (suggestion) {
+                        messageInput.value = suggestion;
+                        messageInput.style.height = 'auto';
+                        messageInput.style.height = (messageInput.scrollHeight) + 'px';
+                        messageInput.focus();
+                        if (gameMode === 'arcade') {
+                            bolos--;
+                            updateBolosDisplay();
+                        }
+                    } else {
+                         alert("No se pudo generar una sugerencia en este momento.");
+                    }
+                }
+                isLoading = false;
+                suggestionButton.disabled = false;
+                suggestionButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>`;
+            });
+            
+            endDebateButton.addEventListener('click', async () => {
+                summaryModal.classList.remove('hidden');
+                summaryContent.innerHTML = `<div class="flex items-center justify-center p-8"><div class="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--text-primary)]"></div></div>`;
+                transcriptContent.innerHTML = '';
+                resourcesContent.innerHTML = `<div class="flex items-center justify-center p-8"><div class="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--text-primary)]"></div></div>`;
+                
+                const governmentPlayer = (userRole === 'government') ? 'user' : 'model';
+                const oppositionPlayer = (userRole === 'opposition') ? 'user' : 'model';
+                const summaryPrompt = `Eres un analista político neutral y experto. La transcripción de un debate es: ${JSON.stringify(chatHistory)}. El "Gobierno" fue '${governmentPlayer}' y la "Oposición" fue '${oppositionPlayer}'. Redacta un resumen objetivo con dos secciones: "Argumentos Principales del Gobierno" y "Argumentos Principales de la Oposición", resumiendo los 3-4 puntos más fuertes de cada uno. No digas quién ganó.`;
+                const resourcesPrompt = `Eres un bibliotecario de investigación. Basado en el tema de debate "${currentTopic}" sobre Venezuela, proporciona 3 enlaces a recursos externos confiables (artículos de noticias, informes de ONGs, datos de organismos internacionales) que enriquezcan la discusión. Formatea tu respuesta como una lista simple, con el título "Recursos Adicionales".`;
+
+                const [summaryResult, resourcesResult] = await Promise.all([
+                    callGeminiAPI({ contents: [{ parts: [{ text: summaryPrompt }] }] }),
+                    callGeminiAPI({ contents: [{ parts: [{ text: resourcesPrompt }] }] })
+                ]);
+
+                if (summaryResult && summaryResult.candidates && summaryResult.candidates[0].content) {
+                    summaryContent.innerHTML = formatAIResponse(summaryResult.candidates[0].content.parts[0].text);
+                    getFeedbackButton.style.display = 'block';
+                } else {
+                     summaryContent.innerHTML = `<p class="text-amber-500">No se pudo generar un resumen en este momento.</p>`;
+                }
+
+                if (resourcesResult && resourcesResult.candidates && resourcesResult.candidates[0].content) {
+                    resourcesContent.innerHTML = formatAIResponse(resourcesResult.candidates[0].content.parts[0].text);
+                } else {
+                    resourcesContent.innerHTML = `<p class="text-amber-500">No se pudieron generar recursos adicionales.</p>`;
+                }
+
+                // Populate transcript tab
+                let transcriptHTML = '';
+                chatHistory.forEach(msg => {
+                    const isUserModel = msg.role === 'model';
+                    const role = isUserModel ? (userRole === 'opposition' ? 'Gobierno' : 'Oposición') : (userRole === 'opposition' ? 'Oposición' : 'Gobierno');
+                    const color = (role === 'Gobierno') ? 'text-red-500' : 'text-sky-400';
+                    transcriptHTML += `<p class="mb-4"><strong class="${color}">${role}:</strong> ${msg.parts[0].text.replace(/\n/g, '<br>')}</p>`;
+                });
+                transcriptContent.innerHTML = transcriptHTML;
+            });
+
+            getFeedbackButton.addEventListener('click', async () => {
+                getFeedbackButton.disabled = true;
+                getFeedbackButton.textContent = 'Analizando...';
+                feedbackSeparator.classList.remove('hidden');
+                feedbackContent.innerHTML = `<div class="flex items-center justify-center p-8"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--text-primary)]"></div></div>`;
+
+                const feedbackPrompt = `Actúas como un coach de debate. Analiza únicamente los argumentos del 'user' (quien jugó el rol de ${userRole === 'opposition' ? 'la Oposición' : 'el Gobierno'}) en la siguiente transcripción: ${JSON.stringify(chatHistory)}. Ignora los argumentos del 'model'. Proporciona una crítica constructiva y profunda sobre la coherencia, uso de evidencia y estructura lógica, con dos secciones: "Puntos Fuertes" (1-2 elogios) y "Áreas de Mejora" (1-2 sugerencias). Sé objetivo y profesional.`;
+                const result = await callGeminiAPI({ contents: [{ parts: [{ text: feedbackPrompt }] }] });
+                
+                if(result && result.candidates && result.candidates[0].content) {
+                    const feedback = result.candidates[0].content.parts[0].text;
+                    feedbackContent.innerHTML = formatAIResponse(feedback);
+                } else {
+                     feedbackContent.innerHTML = `<p class="text-amber-500">No se pudo generar el feedback en este momento.</p>`;
+                }
+                getFeedbackButton.style.display = 'none';
+            });
+
+            restartDebateButton.addEventListener('click', resetApp);
+            
+            settingsButton.addEventListener('click', () => {
+                 apiKeyInput.value = localStorage.getItem('geminiApiKey') || '';
+                 
+                 const authInfo = JSON.parse(localStorage.getItem('userAuth'));
+                 
+                 const existingLogoutBtn = document.getElementById('logout-button');
+                 if(existingLogoutBtn) existingLogoutBtn.remove();
+
+                 if (authInfo && authInfo.type === 'google') {
+                     userNameInput.value = userName;
+                     userNameInput.disabled = true;
+                     userSpecialtyInput.disabled = true;
+                     userSpecialtyInput.value = 'Verificado por Google';
+                     
+                     const logoutBtn = document.createElement('button');
+                     logoutBtn.id = 'logout-button';
+                     logoutBtn.className = 'w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-md mt-4 transition-colors';
+                     logoutBtn.textContent = 'Cerrar Sesión';
+                     logoutBtn.onclick = signOutUser;
+                     saveApiKeyButton.parentElement.parentElement.appendChild(logoutBtn);
+                     
+                 } else {
+                     userNameInput.value = (userName === 'Invitado' || userName === 'Usuario') ? '' : userName.split(' ')[0];
+                     userSpecialtyInput.value = localStorage.getItem('userSpecialty') || 'Analista';
+                     userNameInput.disabled = false;
+                     userSpecialtyInput.disabled = false;
+                 }
+                 
+                 apiKeyModal.classList.remove('hidden');
+            });
+
+            cancelApiKeyButton.addEventListener('click', () => apiKeyModal.classList.add('hidden'));
+
+            saveApiKeyButton.addEventListener('click', () => {
+                const key = apiKeyInput.value.trim();
+                if (key) {
+                    userApiKey = key;
+                    localStorage.setItem('geminiApiKey', key);
+                }
+
+                const authInfo = JSON.parse(localStorage.getItem('userAuth'));
+                if (!authInfo || authInfo.type !== 'google') {
+                    const newName = userNameInput.value.trim();
+                    const newSpecialty = userSpecialtyInput.value.trim();
+                    if(newName) {
+                        userName = newName;
+                        localStorage.setItem('userName', userName);
+                    }
+                    if(newSpecialty){
+                        userSpecialty = newSpecialty;
+                        localStorage.setItem('userSpecialty', userSpecialty);
+                    }
+                }
+
+                apiKeyModal.classList.add('hidden');
+            });
+            
+            difficultyNormal.addEventListener('click', () => {
+                difficulty = 'normal';
+                difficultyNormal.classList.add('active');
+                difficultyHard.classList.remove('active');
+            });
+            difficultyHard.addEventListener('click', () => {
+                difficulty = 'hard';
+                difficultyHard.classList.add('active');
+                difficultyNormal.classList.remove('active');
+            });
+            
+            [tabAnalysis, tabTranscript, tabResources].forEach(tab => {
+                tab.addEventListener('click', () => {
+                    [tabAnalysis, tabTranscript, tabResources].forEach(t => t.classList.remove('active'));
+                    [analysisPane, transcriptPane, resourcesPane].forEach(p => p.classList.add('hidden'));
+                    tab.classList.add('active');
+                    document.getElementById(tab.id.replace('tab-','')+'-pane').classList.remove('hidden');
+                });
+            });
+
+            saveTranscriptButton.addEventListener('click', () => {
+                let textContent = `Transcripción del Debate - Arena Política: Venezuela\n`;
+                textContent += `====================================================\n\n`;
+                chatHistory.forEach(msg => {
+                    const isUserModel = msg.role === 'model';
+                    const role = isUserModel ? (userRole === 'opposition' ? 'Gobierno' : 'Oposición') : (userRole === 'opposition' ? 'Oposición' : 'Gobierno');
+                    textContent += `${role}:\n${msg.parts[0].text}\n\n`;
+                });
+                const blob = new Blob([textContent], { type: 'text/plain;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'transcripcion-debate.txt';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            });
+
+            function applyTheme(theme) {
+                if (theme === 'light') document.body.classList.add('light-mode');
+                else document.body.classList.remove('light-mode');
+                themeSun.classList.toggle('hidden', theme === 'dark');
+                themeMoon.classList.toggle('hidden', theme === 'light');
+            }
+            
+            themeToggle.addEventListener('click', () => {
+                const newTheme = document.body.classList.contains('light-mode') ? 'dark' : 'light';
+                localStorage.setItem('debateTheme', newTheme);
+                applyTheme(newTheme);
+            });
+            applyTheme(localStorage.getItem('debateTheme') || 'dark');
+
+            backToHomeButton.addEventListener('click', resetApp);
+
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (SpeechRecognition) {
+                const recognition = new SpeechRecognition();
+                recognition.continuous = false;
+                recognition.lang = 'es-VE';
+                recognition.interimResults = false;
+                micButton.addEventListener('click', () => { recognition.start(); micButton.classList.add('mic-active'); });
+                recognition.onresult = (event) => { messageInput.value = event.results[0][0].transcript; };
+                recognition.onend = () => micButton.classList.remove('mic-active');
+                recognition.onerror = (event) => { console.error('Error de reconocimiento de voz:', event.error); micButton.classList.remove('mic-active'); };
+            } else {
+                micButton.style.display = 'none';
+            }
+
         });
-
-        function applyTheme(theme) {
-            if (theme === 'light') document.body.classList.add('light-mode');
-            else document.body.classList.remove('light-mode');
-            themeSun.classList.toggle('hidden', theme === 'dark');
-            themeMoon.classList.toggle('hidden', theme === 'light');
-        }
-        
-        themeToggle.addEventListener('click', () => {
-            const newTheme = document.body.classList.contains('light-mode') ? 'dark' : 'light';
-            localStorage.setItem('debateTheme', newTheme);
-            applyTheme(newTheme);
-        });
-        applyTheme(localStorage.getItem('debateTheme') || 'dark');
-
-        backToHomeButton.addEventListener('click', resetApp);
-
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (SpeechRecognition) {
-            const recognition = new SpeechRecognition();
-            recognition.continuous = false;
-            recognition.lang = 'es-VE';
-            recognition.interimResults = false;
-            micButton.addEventListener('click', () => { recognition.start(); micButton.classList.add('mic-active'); });
-            recognition.onresult = (event) => { messageInput.value = event.results[0][0].transcript; };
-            recognition.onend = () => micButton.classList.remove('mic-active');
-            recognition.onerror = (event) => { console.error('Error de reconocimiento de voz:', event.error); micButton.classList.remove('mic-active'); };
-        } else {
-            micButton.style.display = 'none';
-        }
     </script>
 </body>
 </html>
-
-
 
